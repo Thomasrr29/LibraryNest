@@ -1,13 +1,24 @@
-import { Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { author } from "src/module/author/entities/author.entity";
+import { Book } from "src/module/book/entities/book.entity";
+import { Column, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Entity } from "typeorm";
 
-export class sells {
-
+@Entity()
+export class Sells {
     @PrimaryGeneratedColumn()
-    id: number
-
-    @OneToMany
-    bookId: Number
-
+    id: number;
+  
+    @ManyToOne(() => Book, (book) => book.sells)
+    @JoinColumn()
+    book: Book;
+  
+    @ManyToOne(() => author, (author) => author.sells)
+    @JoinColumn()
+    author: author;
+  
     @Column()
     date: Date;
+  
+    @Column()
+    clientName: string;
 }

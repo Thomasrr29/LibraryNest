@@ -1,16 +1,9 @@
 import { IsNotEmpty, IsString } from "class-validator";
+import { IsNull } from "typeorm";
 
 export class CreateAuthorDto {
 
     @IsString()
     @IsNotEmpty()
-    name: string;
-
-    @IsString()
-    @IsNotEmpty()
-    books: string
-
-    @IsString()
-    @IsNotEmpty()
-    genre: string
+    readonly name: string;
 }

@@ -3,21 +3,8 @@ import { IsDate, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 
 export class CreateSellDto {
-
-
-    @IsString()
-    @IsNotEmpty()
-    seller: string;
-
-    @IsString()
-    @IsNotEmpty()
-    client: string;
-
-    @IsNumber()
-    @IsNotEmpty()
-    bookId: Number
-
-    @IsDate()
-    @IsNotEmpty()
-    date: Date;
+    readonly bookId: number;
+    readonly authorId: number;
+    readonly date: Date;
+    readonly clientName: string;
 }

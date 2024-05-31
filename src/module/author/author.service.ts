@@ -2,17 +2,17 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { author } from './entities/author.entity';
+import { Author } from './entities/author.entity';
 import { ILike, Repository } from 'typeorm';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class AuthorService {
 
-  constructor(@InjectRepository(author) private readonly authorRepository: Repository<author>){}
+  constructor(@InjectRepository(Author) private readonly authorRepository: Repository<Author>){}
 
-  async create(createAuthorDto: CreateAuthorDto) {
-    return await this.authorRepository.save(createAuthorDto)
+  async create(createAuthorDto: CreateAuthorDto): Promise<Author> {
+    const author = this.authorRepository.create(createAuthorDto); 
+    return await this.authorRepository.save(author);
   }
 
   async findAll(page: number, limit: number) {
@@ -78,7 +78,7 @@ export class AuthorService {
     .execute(); //Execute 
   }
 
-  async softRemoveId(id: number): Promise<author> {
+  async softRemoveId(id: number): Promise<Author> {
 
     const author = await this.authorRepository.findOneBy({id})
 

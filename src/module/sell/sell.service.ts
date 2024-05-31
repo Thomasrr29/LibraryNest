@@ -2,25 +2,48 @@ import { Injectable, NotFoundException, Query } from '@nestjs/common';
 import { CreateSellDto } from './dto/create-sell.dto';
 import { UpdateSellDto } from './dto/update-sell.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { sells } from './entities/sell.entity';
-import { ILike, LimitOnUpdateNotSupportedError, Repository } from 'typeorm';
-import { dir } from 'console';
-import { NotFoundError } from 'rxjs';
+import { Sells } from './entities/sell.entity';
+import { ILike, Repository } from 'typeorm';
+import { CreateAuthorDto } from '../author/dto/create-author.dto';
+import { Author } from '../author/entities/author.entity';
+import { Book } from '../book/entities/book.entity';
 
 @Injectable()
 export class SellService {
 
 
-  constructor(@InjectRepository(sells) private readonly sellRepository: Repository<sells>){}
+  constructor(@InjectRepository(Sells) private readonly sellRepository: Repository<Sells>,
+              @InjectRepository(Author) private readonly authorRepository: Repository<Author>,
+              @InjectRepository(Book) private readonly bookRepository: Repository<Book>){}
 
   async create(createSellDto: CreateSellDto) {
-    return await this.sellRepository.save(createSellDto)
+
+    const {bookId, date, authorId} = createSellDto
+
+    const book = await this.bookRepository.findOneBy({id: bookId})
+
+    if(!book){
+      throw new NotFoundException(`The book with the id ${bookId} wasn't found`)
+    }
+
+    const author = await this.authorRepository.findOneBy({id: authorId })
+
+    const sell = this.sellRepository.create({
+      date,
+      book,
+      author,
+    })
+
+    return await this.sellRepository.save(sell)
   }
 
   async findAll(
+
     page: number,
     limit: number,
+
   ){
+
     const queryBuilder = this.sellRepository.createQueryBuilder('sell')
     .skip((page - 1) * limit)
     .take(limit)
@@ -33,6 +56,7 @@ export class SellService {
       totalCount: total,
       total: Math.ceil(total/limit)
     }
+
   }
 
   async findOneBy(

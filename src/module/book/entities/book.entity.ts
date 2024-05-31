@@ -1,20 +1,23 @@
-import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { author } from "src/module/author/entities/author.entity";
+import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Author } from "src/module/author/entities/author.entity";
+import { Sells } from "src/module/sell/entities/sell.entity";
 
 @Entity()
-export class book {
+export class Book {
 
     @PrimaryGeneratedColumn()
-    id: number
-
-    @Column({name: 'book_name'})
+    id: number;
+  
+    @Column({ name:'book_name'})
     bookName: string;
-
-    @ManyToOne(() => author, (author) => author.book )
-    author: number;
-
+  
+    @ManyToOne(() => Author, (author) => author.books)
+    author: Author;
+  
+    @OneToMany(() => Sells, (sells) => sells.book)
+    sells: Sells[];
+  
     @DeleteDateColumn()
-    deletedAt?: Date; 
-    
+    deletedAt?: Date;
 
 }
